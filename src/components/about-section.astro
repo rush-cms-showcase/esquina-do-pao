@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+
+const gallery = [
+  '/about/01.png',
+  '/about/02.png',
+  '/about/03.png',
+  '/about/04.png',
+]
+---
+
+<section class="py-24 bg-secondary">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:flex-row items-center gap-16 mb-20">
+      <div class="w-full lg:w-1/2 relative">
+        <img
+          src="/hero-bg.png"
+          alt="Padeiro preparando pão artesanal"
+          class="relative rounded-2xl shadow-xl w-full object-cover aspect-4/3"
+          width={4128}
+          height={3096}
+          loading="lazy"
+        />
+      </div>
+      <div class="w-full lg:w-1/2">
+        <span class="text-primary font-medium tracking-wider uppercase">Nossa História</span>
+        <h2 class="text-4xl font-serif font-bold text-dark mt-3 mb-6">A Padaria do seu Coração</h2>
+        <div class="space-y-6 text-dark/80 text-lg">
+          <p>
+            A Esquina do Pão nasceu do sonho de oferecer à nossa vizinhança um lugar onde você sempre encontra o pão francês quentinho e aquele atendimento de primeira.
+          </p>
+          <p>
+            Desde nossa inauguração, não abrimos mão de colocar a mão na massa. Nossa produção é própria, feita diariamente com ingredientes selecionados e muito amor, garantindo que tudo chegue fresco na sua mesa.
+          </p>
+        </div>
+        <div class="mt-10">
+          <a href="#" class="inline-block border-b-2 border-primary text-dark font-medium pb-1 hover:text-primary transition-colors">Venha nos fazer uma visita</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="pt-12 border-t border-primary/20">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-serif font-bold text-dark">Nosso Espaço</h3>
+        <p class="text-dark/70 mt-3">Um ambiente acolhedor esperando por você e sua família.</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {gallery.map((img) => (
+          <div class="overflow-hidden rounded-xl aspect-square shadow-sm hover:shadow-md transition-shadow">
+            <Image
+              src={img}
+              alt="Ambiente da padaria"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              width={500}
+              height={500}
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+

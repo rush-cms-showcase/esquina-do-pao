@@ -1,0 +1,49 @@
+---
+import { Image } from 'astro:assets'
+import IconWhatsapp from '~icons/logos/whatsapp-icon'
+---
+
+<header class="fixed w-full top-0 z-50 bg-secondary/80 backdrop-blur-md shadow-md">
+  <div class="absolute left-0 top-1 w-full h-0 border-t-2 border-dotted border-primary/40"></div>
+  <div class="absolute left-0 bottom-1 w-full h-0 border-b-2 border-dotted border-primary/40"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      <div class="shrink-0 flex items-center">
+        <a href="/" class="flex items-center gap-3 group">
+          <Image 
+            src="/esquina-do-pao-logo.png"
+            alt="Esquina do Pão Logo"
+            class="h-22 mt-6 w-auto transition-transform duration-300 group-hover:scale-105 z-20"
+            width={100}
+            height={100}
+          />
+          <span class="font-serif text-2xl font-bold text-primary">Esquina do Pão</span>
+        </a>
+      </div>
+      <nav class="hidden mt-2 md:flex space-x-8">
+        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Início</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Fotos</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Contato</a>
+        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Como Chegar?</a>
+      </nav>
+      <div class="hidden md:flex items-center gap-6">
+        <a href="https://wa.me/message/FJPMOHAAB72VG1" target="_blank" class="flex items-center gap-2 text-dark hover:text-primary transition-colors font-medium">
+          <IconWhatsapp class="w-6 h-6" />
+        </a>
+        <a href="#" class="bg-primary text-white px-6 py-2 rounded-full font-medium hover:bg-dark transition-colors duration-300 shadow-md hover:shadow-lg">
+          Cardápio
+        </a>
+      </div>
+      <div class="-mr-2 flex items-center md:hidden">
+        <button type="button" class="bg-secondary p-2 rounded-md justify-center items-center text-primary hover:text-dark hover:bg-primary/10 focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="sr-only">Abrir menu</span>
+          <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+

@@ -1,0 +1,187 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeading from '@/components/ui/section-heading.astro';
+
+const specialties = [
+  {
+    title: 'Buffet Self Service',
+    description: 'Comida caseira, deliciosa e pratos variados todos os dias no almoço.',
+    image: '/specialties/01.png'
+  },
+  {
+    title: 'Café da Manhã Completo',
+    description: 'Pães quentinhos, bolos, café feito na hora e lanches deliciosos para começar bem o dia.',
+    image: '/specialties/02.png'
+  },
+  {
+    title: 'Pizzas & Lanches',
+    description: 'Pizza com massa de qualidade, porções e lanches especiais para curtir o fim de dia com amigos.',
+    image: '/specialties/04.png'
+  },
+  {
+    title: 'Nossos Pães',
+    description: 'Do clássico pão francês à nossa linha de pães doces e caseiros. Assados várias vezes ao dia!',
+    image: '/specialties/06.png'
+  },
+  {
+    title: 'Café Feito na Hora',
+    description: 'Aquele café fresquinho e expresso tirado com perfeição a qualquer hora do dia.',
+    image: '/specialties/03.png'
+  },
+  {
+    title: 'Happy Hour',
+    description: 'Cerveja gelada, drinks e porções generosas para relaxar com a galera no fim do expediente.',
+    image: '/specialties/05.png'
+  }
+]
+---
+
+<section class="py-24 bg-white overflow-hidden">
+  <div class="max-w-7xl xl:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <SectionHeading 
+      title="Tudo de Bom" 
+      subtitle="Sabe tudo o que pode fazer na Esquina do Pão?" 
+    />
+    
+    <div class="relative group">
+      <!-- Swiper Container -->
+      <div class="swiper specialties-swiper pb-12 desktop-swiper-disable">
+        <div class="swiper-wrapper">
+          {specialties.map((item) => (
+            <div class="swiper-slide h-auto">
+              <div class="h-full flex flex-col">
+                <div class="relative overflow-hidden rounded-2xl mb-4 aspect-4/5 shadow-md shrink-0">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    class="w-full h-full object-cover"
+                    width={500}
+                    height={500}
+                    loading="lazy"
+                  />
+                </div>
+                <h3 class="text-xl font-serif font-bold text-dark mb-2">{item.title}</h3>
+                <p class="text-dark/70 text-sm grow">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <!-- Pagination & Navigation for Swiper -->
+        <div class="swiper-button-prev desktop-swiper-hide text-primary! after:text-2xl! drop-shadow-md bg-white/80 rounded-full w-10 h-10 flex items-center justify-center -left-2 p-3"></div>
+        <div class="swiper-button-next desktop-swiper-hide text-primary! after:text-2xl! drop-shadow-md bg-white/80 rounded-full w-10 h-10 flex items-center justify-center -right-2 p-3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .swiper-pagination-bullet-active {
+    background-color: var(--color-primary, #8b5a2b) !important;
+  }
+  
+  /* Force a grid and override any Swiper inline styles on Desktop */
+  @media (min-width: 1280px) {
+    .desktop-swiper-disable {
+      padding-bottom: 0 !important;
+    }
+    .desktop-swiper-disable .swiper-wrapper {
+      display: grid !important;
+      grid-template-columns: repeat(6, 1fr) !important;
+      gap: 1.5rem !important;
+      transform: none !important;
+      width: 100% !important;
+    }
+    .desktop-swiper-disable .swiper-slide {
+      width: 100% !important;
+      margin-right: 0 !important;
+      margin-left: 0 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+    }
+    .desktop-swiper-hide {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/navigation';
+  import 'swiper/css/pagination';
+
+  function initSwiper() {
+    interface SwiperElement extends Element {
+      swiper?: Swiper;
+    }
+    const swiperEl = document.querySelector('.specialties-swiper') as SwiperElement | null;
+    if (!swiperEl) return;
+    
+    // Prevent re-initialization
+    if (swiperEl.swiper) {
+      swiperEl.swiper.destroy();
+    }
+
+    new Swiper('.specialties-swiper', {
+      modules: [Navigation, Pagination, Autoplay],
+      slidesPerView: 1.2,
+      spaceBetween: 16,
+      centeredSlides: true,
+      loop: true,
+      observer: true,
+      observeParents: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        480: {
+          slidesPerView: 1.5,
+          spaceBetween: 16,
+          centeredSlides: true,
+        },
+        640: {
+          slidesPerView: 2.2,
+          spaceBetween: 20,
+          centeredSlides: false,
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 24,
+          centeredSlides: false,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 24,
+          centeredSlides: false,
+        },
+        1280: {
+          enabled: false,
+        }
+      }
+    });
+  }
+
+  // In Astro, handle standard load and ViewTransitions
+  document.addEventListener('astro:page-load', initSwiper);
+  
+  // Also run immediately if the script loads late
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initSwiper();
+  } else {
+    document.addEventListener('DOMContentLoaded', initSwiper);
+  }
+</script>
