@@ -1,0 +1,23 @@
+{
+  "name": "esquina-do-pao",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^5.17.1",
+    "sharp": "^0.34.5",
+    "swiper": "^12.1.2",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@iconify-json/ic": "^1.2.4",
+    "@iconify-json/logos": "^1.2.10",
+    "unplugin-icons": "^23.0.1"
+  }
+}
