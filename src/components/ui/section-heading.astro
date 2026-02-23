@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import wheatIcon from '@/assets/images/wheat.svg';
+
+export interface Props {
+  title: string;
+  subtitle: string;
+  theme?: 'light' | 'dark';
+  titleColor?: string;
+  align?: 'center' | 'left';
+}
+
+const { 
+  title, 
+  subtitle, 
+  theme = 'light',
+  titleColor = 'text-primary',
+  align = 'center'
+} = Astro.props;
+
+const isDark = theme === 'dark';
+const subtitleColor = isDark ? 'text-white' : 'text-dark';
+const alignWrapperClass = align === 'left' ? 'text-left' : 'text-center';
+const alignFlexClass = align === 'left' ? 'justify-start' : 'justify-center';
+---
+
+<div class={`mb-16 ${alignWrapperClass}`}>
+  <span class={`${titleColor} font-medium tracking-wider uppercase block`}>{title}</span>
+  <h2 class={`text-4xl font-serif font-bold ${subtitleColor} mt-2`}>{subtitle}</h2>
+  <div class={`flex ${alignFlexClass} -mt-2`}>
+    <Image
+      src={wheatIcon}
+      alt="Divider"
+      class={`h-18 w-auto object-contain text-accent ${isDark ? 'brightness-200' : ''}`}
+    />
+  </div>
+</div>
