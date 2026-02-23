@@ -2,6 +2,7 @@
 import '@/styles/app.css'
 import Header from '@/components/header.astro'
 import Footer from '@/components/footer.astro'
+import WhatsappFloat from '@/components/ui/whatsapp-float.astro'
 
 interface Props {
   title: string
@@ -28,5 +29,6 @@ const { title } = Astro.props
       <slot />
     </main>
     <Footer />
+    <WhatsappFloat />
   </body>
 </html>
