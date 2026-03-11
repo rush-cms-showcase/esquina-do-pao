@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '@/layouts/base-layout.astro';
-import SectionHeading from '@/components/ui/section-heading.astro';
 import { Image } from 'astro:assets';
 import { rush } from '@/lib/rush';
 import { RUSH_ROUTE_BLOG_ID } from 'astro:env/server';
@@ -30,7 +29,6 @@ interface RichTextBlock {
   marks?: { type: string; attrs?: Record<string, any> }[];
 }
 
-// Function to safely render rich text (blocks format), similar to the portico implementation
 function renderRichText(blocks: RichTextBlock[]): string {
   if (!blocks || !Array.isArray(blocks)) return '';
 
@@ -68,11 +66,10 @@ function renderRichText(blocks: RichTextBlock[]): string {
       case 'image':
         return `<figure class="my-10"><img src="${block.attrs?.src}" alt="${block.attrs?.alt || ''}" class="w-full rounded-xl shadow-md" />${block.attrs?.title ? `<figcaption class="text-center mt-3 text-sm text-dark/60">${block.attrs?.title}</figcaption>` : ''}</figure>`;
       default:
-        // Se for um bloco com conteúdo (como um wrapper), processa o conteúdo
         if (block.content) {
             return renderRichText(block.content);
         }
-        return ''; // Ignora blocos não reconhecidos ou vazios
+        return '';
     }
   }).join('');
 }
@@ -82,7 +79,7 @@ const contentHtml = renderRichText(post.content?.content || []);
 
 <BaseLayout title={`${post.title} | Blog Esquina do Pão`}>
   <article class="bg-white min-h-screen pb-24">
-    {/* Cabeçalho do Post */}
+    
     <header class="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-dark">
       <div class="absolute inset-0 z-0 opacity-40">
         {post.cover?.url ? (
@@ -126,7 +123,7 @@ const contentHtml = renderRichText(post.content?.content || []);
       </div>
     </header>
 
-    {/* Imagem de Destaque (Principal) */}
+    
     {post.cover?.url && (
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 md:-mt-20 relative z-30 mb-16">
         <Image 
@@ -142,20 +139,20 @@ const contentHtml = renderRichText(post.content?.content || []);
       </div>
     )}
 
-    {/* Conteúdo do Post */}
+    
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Resumo/Excerpt */}
+      
       {post.excerpt && (
         <div class="mb-12 text-2xl font-serif italic text-dark/70 text-center leading-relaxed">
           "{post.excerpt}"
         </div>
       )}
 
-      {/* Conteúdo Rico */}
+      
       <div class="prose prose-lg prose-headings:font-serif prose-headings:text-dark prose-a:text-primary hover:prose-a:text-accent prose-img:rounded-xl prose-img:shadow-md max-w-none" set:html={contentHtml}>
       </div>
 
-      {/* Tags */}
+      
       {post.taxonomies?.tags && post.taxonomies.tags.length > 0 && (
         <div class="mt-16 pt-8 border-t border-dark/10 flex flex-wrap gap-3 items-center">
           <span class="font-bold text-dark/70 mr-2">Tags:</span>
@@ -167,7 +164,7 @@ const contentHtml = renderRichText(post.content?.content || []);
         </div>
       )}
 
-      {/* Botão de Voltar */}
+      
       <div class="mt-16 text-center">
         <a href="/blog" class="inline-flex items-center gap-2 bg-dark text-white hover:bg-primary transition-colors px-8 py-4 rounded-full font-bold shadow-md hover:shadow-lg">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

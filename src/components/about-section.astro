@@ -7,7 +7,6 @@ interface Props {
 
 const { data = {} } = Astro.props;
 
-// Use CMS data if available, fallback to default hardcoded list
 const gallery = Array.isArray(data.about_gallery) && data.about_gallery.length > 0
   ? data.about_gallery
   : [
@@ -54,7 +53,7 @@ const gallery = Array.isArray(data.about_gallery) && data.about_gallery.length >
         <p class="text-dark/70 mt-3" set:html={data.about_gallery_subtitle || "Um ambiente acolhedor esperando por você e sua família."}></p>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {gallery.map((img) => (
+        {gallery.map((img: string) => (
           <div class="overflow-hidden rounded-xl aspect-square shadow-sm hover:shadow-md transition-shadow">
             <Image
               src={img}

@@ -6,13 +6,12 @@ import { rush } from '@/lib/rush';
 import { RUSH_MENU_ID } from 'astro:env/server';
 import type { RushMenuCategory } from '@/types/rush';
 
-// Get digital menu entries (categories)
 const menuCollectionId = RUSH_MENU_ID;
 let categories: RushMenuCategory[] = [];
 
 try {
   const response = await rush.entries.get(String(menuCollectionId), {
-    per_page: 100, // Fetch all categories
+    per_page: 100,
     sort: 'sort_order'
   }) as any;
   categories = response.data || [];
@@ -23,7 +22,6 @@ try {
 
 <BaseLayout title="Cardápio Digital | Esquina do Pão">
   <section class="pt-32 pb-24 bg-white relative overflow-hidden min-h-screen">
-    {/* Background Decorative Element */}
     <div class="absolute top-0 inset-x-0 h-[500px] bg-linear-to-b from-secondary/50 to-transparent pointer-events-none -z-10"></div>
     
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,7 +45,6 @@ try {
         </div>
       )}
       
-      {/* Category Navigation (Sticky Bottom or Sidebar - simplified for now as a bottom nav) */}
       <MenuNavigation categories={categories} />
 
     </div>

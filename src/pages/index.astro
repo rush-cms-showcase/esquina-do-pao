@@ -12,11 +12,11 @@ import TestimonialsSection from '@/components/testimonials-section.astro'
 const rootIdStr = rushConfig.routes['/']
 const rootId = rootIdStr ? Number(rootIdStr) : undefined
 
-let entryData = {}
+let entryData: Record<string, any> = {}
 if (rootId) {
   try {
     const rootEntry = await rush.entries.getById(rootId)
-    entryData = rootEntry?.data || Object.create(null)
+    entryData = (rootEntry as any)?.data || Object.create(null)
   } catch (error) {
     console.error('Failed to fetch root page entry:', error)
   }

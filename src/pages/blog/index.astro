@@ -3,15 +3,13 @@ import BaseLayout from '@/layouts/base-layout.astro';
 import SectionHeading from '@/components/ui/section-heading.astro';
 import { Image } from 'astro:assets';
 import { rush } from '@/lib/rush';
-import { rushConfig } from '../../../rush.config';
 import { RUSH_ROUTE_BLOG_ID } from 'astro:env/server';
 
-// Get blog entries
-const blogCollectionId = RUSH_ROUTE_BLOG_ID;
+const blogCollectionId = String(RUSH_ROUTE_BLOG_ID);
 const response = await rush.entries.get(blogCollectionId, {
   per_page: 12,
   sort: '-published_at'
-});
+}) as any;
 
 const posts = response.data || [];
 ---

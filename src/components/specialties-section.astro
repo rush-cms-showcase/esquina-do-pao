@@ -8,7 +8,6 @@ interface Props {
 
 const { data = {} } = Astro.props;
 
-// Use CMS data if available, fallback to default hardcoded list if not built yet
 const specialties = Array.isArray(data.specialties) && data.specialties.length > 0 
   ? data.specialties 
   : [
@@ -53,10 +52,9 @@ const specialties = Array.isArray(data.specialties) && data.specialties.length >
     />
     
     <div class="relative group">
-      <!-- Swiper Container -->
       <div class="swiper specialties-swiper pb-12 desktop-swiper-disable">
         <div class="swiper-wrapper">
-          {specialties.map((item) => (
+          {specialties.map((item: any) => (
             <div class="swiper-slide h-auto">
               <div class="h-full flex flex-col">
                 <div class="relative overflow-hidden rounded-2xl mb-4 aspect-4/5 shadow-md shrink-0">
@@ -78,7 +76,6 @@ const specialties = Array.isArray(data.specialties) && data.specialties.length >
           ))}
         </div>
         
-        <!-- Pagination & Navigation for Swiper -->
         <div class="swiper-button-prev desktop-swiper-hide text-primary! after:text-2xl! drop-shadow-md bg-white/80 rounded-full w-10 h-10 flex items-center justify-center -left-2 p-3"></div>
         <div class="swiper-button-next desktop-swiper-hide text-primary! after:text-2xl! drop-shadow-md bg-white/80 rounded-full w-10 h-10 flex items-center justify-center -right-2 p-3"></div>
       </div>
@@ -131,7 +128,6 @@ const specialties = Array.isArray(data.specialties) && data.specialties.length >
     const swiperEl = document.querySelector('.specialties-swiper') as SwiperElement | null;
     if (!swiperEl) return;
     
-    // Prevent re-initialization
     if (swiperEl.swiper) {
       swiperEl.swiper.destroy();
     }
@@ -184,10 +180,8 @@ const specialties = Array.isArray(data.specialties) && data.specialties.length >
     });
   }
 
-  // In Astro, handle standard load and ViewTransitions
   document.addEventListener('astro:page-load', initSwiper);
   
-  // Also run immediately if the script loads late
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     initSwiper();
   } else {

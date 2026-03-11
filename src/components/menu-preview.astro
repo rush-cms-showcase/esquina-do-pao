@@ -7,7 +7,6 @@ interface Props {
 
 const { data = {} } = Astro.props;
 
-// Use CMS data if available, fallback to default hardcoded list
 const menuCategories = Array.isArray(data.menu_categories) && data.menu_categories.length > 0
   ? data.menu_categories
   : [
@@ -51,13 +50,13 @@ const menuCategories = Array.isArray(data.menu_categories) && data.menu_categori
         </a>
       </div>
     </div>
-      {menuCategories.map((group) => (
+      {menuCategories.map((group: any) => (
         <div>
           <h3 class="w-full text-2xl font-serif font-bold text-primary mb-8 border-b-2 border-dashed border-primary/20 pb-2 inline-block">
             {group.category}
           </h3>
           <ul class="space-y-8">
-            {Array.isArray(group.items) ? group.items.map((item) => (
+            {Array.isArray(group.items) ? group.items.map((item: any) => (
               <li class="cursor-default">
                 <div class="flex justify-between items-baseline gap-4 mb-1">
                   <span class="font-bold font-serif text-lg text-dark">{item.name}</span>

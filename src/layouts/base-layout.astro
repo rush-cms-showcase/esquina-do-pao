@@ -14,9 +14,9 @@ interface Props {
 const { title } = Astro.props
 
 const [mainMenuRes, footerMenuRes] = await Promise.all([
-  rush.getMenu(rushConfig.locales.pt_BR.navs.main),
-  rush.getMenu(rushConfig.locales.pt_BR.navs.footer)
-])
+  rush.getMenu(rushConfig.locales.pt_BR.navs?.main || ''),
+  rush.getMenu(rushConfig.locales.pt_BR.navs?.footer || '')
+]) as any;
 
 const mainMenu = mainMenuRes.data?.items || []
 const footerMenu = footerMenuRes.data?.items || []
