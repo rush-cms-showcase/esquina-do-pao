@@ -5,21 +5,22 @@ import { Image } from 'astro:assets';
 import { rush } from '@/lib/rush';
 import { RUSH_ROUTE_BLOG_ID } from 'astro:env/server';
 
-export async function getStaticPaths() {
-  const blogCollectionId = RUSH_ROUTE_BLOG_ID;
-  const response = await rush.entries.get(blogCollectionId, {
-    per_page: 100 // Fetch up to 100 posts for static generation
-  });
-  
-  const posts = response.data || [];
-  
-  return posts.map((post: any) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
-}
+const { slug } = Astro.params;
 
-const { post } = Astro.props;
+const blogCollectionId = RUSH_ROUTE_BLOG_ID;
+const response = await rush.entries.get(blogCollectionId, {
+  filters: { 'slug': slug },
+  per_page: 1
+});
+
+const post = response.data?.[0];
+
+if (!post) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found'
+  });
+}
 
 // Function to safely render rich text (blocks format), similar to the portico implementation
 function renderRichText(blocks: any[]) {
