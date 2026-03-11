@@ -1,0 +1,172 @@
+---
+import BaseLayout from '@/layouts/base-layout.astro';
+import SectionHeading from '@/components/ui/section-heading.astro';
+import { Image } from 'astro:assets';
+import { rush } from '@/lib/rush';
+import { RUSH_ROUTE_BLOG_ID } from 'astro:env/server';
+
+export async function getStaticPaths() {
+  const blogCollectionId = RUSH_ROUTE_BLOG_ID;
+  const response = await rush.entries.get(blogCollectionId, {
+    per_page: 100 // Fetch up to 100 posts for static generation
+  });
+  
+  const posts = response.data || [];
+  
+  return posts.map((post: any) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+
+// Function to safely render rich text (blocks format), similar to the portico implementation
+function renderRichText(blocks: any[]) {
+  if (!blocks || !Array.isArray(blocks)) return '';
+
+  return blocks.map(block => {
+    switch (block.type) {
+      case 'paragraph':
+        return `<p class="mb-6 text-lg text-dark/80 leading-relaxed">${block.content ? renderRichText(block.content) : ''}</p>`;
+      case 'heading':
+        const Tag = `h${block.attrs?.level || 2}`;
+        const sizes: Record<number, string> = {
+          1: 'text-4xl', 2: 'text-3xl', 3: 'text-2xl', 4: 'text-xl', 5: 'text-lg', 6: 'text-base'
+        };
+        const sizeClass = sizes[block.attrs?.level as number] || 'text-2xl';
+        return `<${Tag} class="${sizeClass} font-serif font-bold text-dark mt-12 mb-6">${block.content ? renderRichText(block.content) : ''}</${Tag}>`;
+      case 'text':
+        let text = block.text || '';
+        if (block.marks) {
+          block.marks.forEach((mark: any) => {
+            if (mark.type === 'bold') text = `<strong>${text}</strong>`;
+            if (mark.type === 'italic') text = `<em>${text}</em>`;
+            if (mark.type === 'underline') text = `<u>${text}</u>`;
+            if (mark.type === 'strike') text = `<del>${text}</del>`;
+            if (mark.type === 'link') text = `<a href="${mark.attrs.href}" target="${mark.attrs.target}" class="text-primary hover:text-accent underline">${text}</a>`;
+          });
+        }
+        return text;
+      case 'bulletList':
+        return `<ul class="list-disc list-inside mb-6 space-y-2 text-dark/80">${block.content ? renderRichText(block.content) : ''}</ul>`;
+      case 'orderedList':
+        return `<ol class="list-decimal list-inside mb-6 space-y-2 text-dark/80">${block.content ? renderRichText(block.content) : ''}</ol>`;
+      case 'listItem':
+        return `<li>${block.content ? renderRichText(block.content) : ''}</li>`;
+      case 'blockquote':
+        return `<blockquote class="border-l-4 border-primary pl-6 py-2 my-8 italic text-xl text-dark/70 bg-primary/5 rounded-r-lg">${block.content ? renderRichText(block.content) : ''}</blockquote>`;
+      case 'image':
+        return `<figure class="my-10"><img src="${block.attrs.src}" alt="${block.attrs.alt || ''}" class="w-full rounded-xl shadow-md" />${block.attrs.title ? `<figcaption class="text-center mt-3 text-sm text-dark/60">${block.attrs.title}</figcaption>` : ''}</figure>`;
+      default:
+        // Se for um bloco com conteúdo (como um wrapper), processa o conteúdo
+        if (block.content) {
+            return renderRichText(block.content);
+        }
+        return ''; // Ignora blocos não reconhecidos ou vazios
+    }
+  }).join('');
+}
+
+const contentHtml = renderRichText(post.content?.content || []);
+---
+
+<BaseLayout title={`${post.title} | Blog Esquina do Pão`}>
+  <article class="bg-white min-h-screen pb-24">
+    {/* Cabeçalho do Post */}
+    <header class="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-dark">
+      <div class="absolute inset-0 z-0 opacity-40">
+        {post.cover?.url ? (
+          <Image 
+            src={post.cover.url} 
+            alt={post.title} 
+            width={1920} 
+            height={1080} 
+            class="w-full h-full object-cover blur-sm"
+          />
+        ) : (
+          <div class="w-full h-full bg-secondary"></div>
+        )}
+      </div>
+      <div class="absolute inset-0 bg-linear-to-b from-dark/80 via-dark/90 to-dark z-10"></div>
+      
+      <div class="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {post.taxonomies?.categorias?.[0] && (
+          <div class="mb-6 inline-block bg-primary text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+            {post.taxonomies.categorias[0].title}
+          </div>
+        )}
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight drop-shadow-md">
+          {post.title}
+        </h1>
+        <div class="flex items-center justify-center gap-4 text-white/70 font-medium text-lg">
+          <time datetime={post.published_at}>
+            {new Date(post.published_at).toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric'
+            })}
+          </time>
+          {post.author?.name && (
+            <>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/80"></span>
+              <span>Por {post.author.name}</span>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+
+    {/* Imagem de Destaque (Principal) */}
+    {post.cover?.url && (
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 md:-mt-20 relative z-30 mb-16">
+        <Image 
+          src={post.cover.url} 
+          alt={post.title} 
+          width={1200} 
+          height={675} 
+          class="w-full aspect-video object-cover rounded-2xl shadow-2xl border-4 border-white"
+        />
+        {post.cover?.alt && (
+          <p class="text-center mt-4 text-sm text-dark/50 italic">{post.cover.alt}</p>
+        )}
+      </div>
+    )}
+
+    {/* Conteúdo do Post */}
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Resumo/Excerpt */}
+      {post.excerpt && (
+        <div class="mb-12 text-2xl font-serif italic text-dark/70 text-center leading-relaxed">
+          "{post.excerpt}"
+        </div>
+      )}
+
+      {/* Conteúdo Rico */}
+      <div class="prose prose-lg prose-headings:font-serif prose-headings:text-dark prose-a:text-primary hover:prose-a:text-accent prose-img:rounded-xl prose-img:shadow-md max-w-none" set:html={contentHtml}>
+      </div>
+
+      {/* Tags */}
+      {post.taxonomies?.tags && post.taxonomies.tags.length > 0 && (
+        <div class="mt-16 pt-8 border-t border-dark/10 flex flex-wrap gap-3 items-center">
+          <span class="font-bold text-dark/70 mr-2">Tags:</span>
+          {post.taxonomies.tags.map((tag: any) => (
+            <span class="bg-secondary/30 text-dark/80 text-sm px-4 py-1.5 rounded-full border border-dark/10">
+              #{tag.title}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Botão de Voltar */}
+      <div class="mt-16 text-center">
+        <a href="/blog" class="inline-flex items-center gap-2 bg-dark text-white hover:bg-primary transition-colors px-8 py-4 rounded-full font-bold shadow-md hover:shadow-lg">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Voltar para o Blog
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
