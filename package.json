@@ -9,15 +9,18 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.7",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.17.1",
     "sharp": "^0.34.5",
     "swiper": "^12.1.2",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@iconify-json/ic": "^1.2.4",
     "@iconify-json/logos": "^1.2.10",
+    "@types/node": "^25.4.0",
     "unplugin-icons": "^23.0.1"
   }
 }
