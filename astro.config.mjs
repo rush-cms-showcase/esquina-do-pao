@@ -2,12 +2,16 @@
 import { defineConfig, envField } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import Icons from 'unplugin-icons/vite';
+import node from '@astrojs/node';
 import { fileURLToPath } from 'node:url';
 
 // https://astro.build/config
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
+  adapter: node({
+    mode: 'standalone',
+  }),
   env: {
     schema: {
       RUSH_API_TOKEN: envField.string({ context: 'server', access: 'secret' }),

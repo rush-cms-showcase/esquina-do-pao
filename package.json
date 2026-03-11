@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "start": "node ./dist/server/entry.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.7",
+    "@astrojs/node": "^9.5.5",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.17.1",
     "sharp": "^0.34.5",
