@@ -2,45 +2,54 @@
 import { Image } from 'astro:assets';
 import SectionHeading from '@/components/ui/section-heading.astro';
 
-const specialties = [
-  {
-    title: 'Buffet Self Service',
-    description: 'Comida caseira, deliciosa e pratos variados todos os dias no almoço.',
-    image: '/specialties/01.png'
-  },
-  {
-    title: 'Café da Manhã Completo',
-    description: 'Pães quentinhos, bolos, café feito na hora e lanches deliciosos para começar bem o dia.',
-    image: '/specialties/02.png'
-  },
-  {
-    title: 'Pizzas & Lanches',
-    description: 'Pizza com massa de qualidade, porções e lanches especiais para curtir o fim de dia com amigos.',
-    image: '/specialties/04.png'
-  },
-  {
-    title: 'Nossos Pães',
-    description: 'Do clássico pão francês à nossa linha de pães doces e caseiros. Assados várias vezes ao dia!',
-    image: '/specialties/06.png'
-  },
-  {
-    title: 'Café Feito na Hora',
-    description: 'Aquele café fresquinho e expresso tirado com perfeição a qualquer hora do dia.',
-    image: '/specialties/03.png'
-  },
-  {
-    title: 'Happy Hour',
-    description: 'Cerveja gelada, drinks e porções generosas para relaxar com a galera no fim do expediente.',
-    image: '/specialties/05.png'
-  }
-]
+interface Props {
+  data?: any;
+}
+
+const { data = {} } = Astro.props;
+
+// Use CMS data if available, fallback to default hardcoded list if not built yet
+const specialties = Array.isArray(data.specialties) && data.specialties.length > 0 
+  ? data.specialties 
+  : [
+      {
+        title: 'Buffet Self Service',
+        description: 'Comida caseira, deliciosa e pratos variados todos os dias no almoço.',
+        image: '/specialties/01.png'
+      },
+      {
+        title: 'Café da Manhã Completo',
+        description: 'Pães quentinhos, bolos, café feito na hora e lanches deliciosos para começar bem o dia.',
+        image: '/specialties/02.png'
+      },
+      {
+        title: 'Pizzas & Lanches',
+        description: 'Pizza com massa de qualidade, porções e lanches especiais para curtir o fim de dia com amigos.',
+        image: '/specialties/04.png'
+      },
+      {
+        title: 'Nossos Pães',
+        description: 'Do clássico pão francês à nossa linha de pães doces e caseiros. Assados várias vezes ao dia!',
+        image: '/specialties/06.png'
+      },
+      {
+        title: 'Café Feito na Hora',
+        description: 'Aquele café fresquinho e expresso tirado com perfeição a qualquer hora do dia.',
+        image: '/specialties/03.png'
+      },
+      {
+        title: 'Happy Hour',
+        description: 'Cerveja gelada, drinks e porções generosas para relaxar com a galera no fim do expediente.',
+        image: '/specialties/05.png'
+      }
+    ];
 ---
 
 <section class="py-24 bg-white overflow-hidden">
   <div class="max-w-7xl xl:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
     <SectionHeading 
-      title="Tudo de Bom" 
-      subtitle="Sabe tudo o que pode fazer na Esquina do Pão?" 
+      title={data.specialties_title || "Tudo de Bom"} 
+      subtitle={data.specialties_subtitle || "Sabe tudo o que pode fazer na Esquina do Pão?"} 
     />
     
     <div class="relative group">
@@ -52,7 +61,7 @@ const specialties = [
               <div class="h-full flex flex-col">
                 <div class="relative overflow-hidden rounded-2xl mb-4 aspect-4/5 shadow-md shrink-0">
                   <Image
-                    src={item.image}
+                    src={item.image || item.image_url}
                     alt={item.title}
                     class="w-full h-full object-cover"
                     width={500}

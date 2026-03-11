@@ -1,30 +1,35 @@
 ---
 import SectionHeading from '@/components/ui/section-heading.astro';
 
-// [TODO] This data can be easily swapped out for an API fetch later
-// e.g. const response = await fetch('https://api.exemplo.com/menu-preview');
-// const menuCategories = await response.json();
+interface Props {
+  data?: any;
+}
 
-const menuCategories = [
-  {
-    category: "Pães Quentinhos",
-    items: [
-      { name: "Pão Francês Tradicional", description: "Fornadas a cada hora, sempre crocante", price: "R$ 19,90/kg" },
-      { name: "Pão de Queijo Especial", description: "A verdadeira receita mineira com muito queijo", price: "R$ 49,90/kg" },
-      { name: "Broa de Milho Fofinha", description: "Com toque de erva doce, receita da vovó", price: "R$ 6,50/un" },
-      { name: "Baguete Recheada", description: "Recheios variados: frango, calabresa e quatro queijos", price: "R$ 14,00/un" }
+const { data = {} } = Astro.props;
+
+// Use CMS data if available, fallback to default hardcoded list
+const menuCategories = Array.isArray(data.menu_categories) && data.menu_categories.length > 0
+  ? data.menu_categories
+  : [
+      {
+        category: "Pães Quentinhos",
+        items: [
+          { name: "Pão Francês Tradicional", description: "Fornadas a cada hora, sempre crocante", price: "R$ 19,90/kg" },
+          { name: "Pão de Queijo Especial", description: "A verdadeira receita mineira com muito queijo", price: "R$ 49,90/kg" },
+          { name: "Broa de Milho Fofinha", description: "Com toque de erva doce, receita da vovó", price: "R$ 6,50/un" },
+          { name: "Baguete Recheada", description: "Recheios variados: frango, calabresa e quatro queijos", price: "R$ 14,00/un" }
+        ]
+      },
+      {
+        category: "Lanches na Chapa",
+        items: [
+          { name: "Misto Quente Caprichado", description: "Pão francês, presunto de primeira e muita muçarela", price: "R$ 12,00" },
+          { name: "Bauru Clássico", description: "Pão francês, rosbife caseiro, tomate, picles e queijo derretido", price: "R$ 24,00" },
+          { name: "Pão na Chapa com Requeijão", description: "O clássico paulistano bem tostado", price: "R$ 8,00" },
+          { name: "X-Tudo da Esquina", description: "Hambúrguer, queijo, presunto, bacon, ovo, alface e tomate", price: "R$ 28,00" }
+        ]
+      }
     ]
-  },
-  {
-    category: "Lanches na Chapa",
-    items: [
-      { name: "Misto Quente Caprichado", description: "Pão francês, presunto de primeira e muita muçarela", price: "R$ 12,00" },
-      { name: "Bauru Clássico", description: "Pão francês, rosbife caseiro, tomate, picles e queijo derretido", price: "R$ 24,00" },
-      { name: "Pão na Chapa com Requeijão", description: "O clássico paulistano bem tostado", price: "R$ 8,00" },
-      { name: "X-Tudo da Esquina", description: "Hambúrguer, queijo, presunto, bacon, ovo, alface e tomate", price: "R$ 28,00" }
-    ]
-  }
-]
 ---
 
 <section class="pt-24 bg-white relative overflow-hidden">
@@ -33,8 +38,8 @@ const menuCategories = [
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
     <SectionHeading 
-      title="Dá água na boca" 
-      subtitle="Um pedaço do nosso Cardápio"
+      title={data.menu_preview_title || "Dá água na boca"} 
+      subtitle={data.menu_preview_subtitle || "Um pedaço do nosso Cardápio"}
       titleColor="text-accent"
     />
 
@@ -52,7 +57,7 @@ const menuCategories = [
             {group.category}
           </h3>
           <ul class="space-y-8">
-            {group.items.map((item) => (
+            {Array.isArray(group.items) ? group.items.map((item) => (
               <li class="cursor-default">
                 <div class="flex justify-between items-baseline gap-4 mb-1">
                   <span class="font-bold font-serif text-lg text-dark">{item.name}</span>
@@ -61,7 +66,7 @@ const menuCategories = [
                 </div>
                 <p class="text-dark/70 text-sm leading-relaxed pr-16">{item.description}</p>
               </li>
-            ))}
+            )) : null}
           </ul>
         </div>
       ))}

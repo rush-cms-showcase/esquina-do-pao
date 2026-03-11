@@ -1,16 +1,32 @@
 ---
 import BaseLayout from '@/layouts/base-layout.astro'
+import { rush } from '@/lib/rush'
+import { rushConfig } from 'rush.config'
+
 import HeroSection from '@/components/hero-section.astro'
 import SpecialtiesSection from '@/components/specialties-section.astro'
 import MenuPreview from '@/components/menu-preview.astro'
 import AboutSection from '@/components/about-section.astro'
 import TestimonialsSection from '@/components/testimonials-section.astro'
+
+const rootIdStr = rushConfig.routes['/']
+const rootId = rootIdStr ? Number(rootIdStr) : undefined
+
+let entryData = {}
+if (rootId) {
+  try {
+    const rootEntry = await rush.entries.getById(rootId)
+    entryData = rootEntry?.data || Object.create(null)
+  } catch (error) {
+    console.error('Failed to fetch root page entry:', error)
+  }
+}
 ---
 
-<BaseLayout title="Esquina do Pão | O Verdadeiro Sabor Artesanal">
-  <HeroSection />
-  <SpecialtiesSection />
-  <MenuPreview />
-  <AboutSection />
-  <TestimonialsSection />
+<BaseLayout title={entryData.title || "Esquina do Pão | O Verdadeiro Sabor Artesanal"}>
+  <HeroSection data={entryData} />
+  <SpecialtiesSection data={entryData} />
+  <MenuPreview data={entryData} />
+  <AboutSection data={entryData} />
+  <TestimonialsSection data={entryData} />
 </BaseLayout>

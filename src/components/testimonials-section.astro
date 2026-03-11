@@ -1,35 +1,44 @@
 ---
 import SectionHeading from '@/components/ui/section-heading.astro';
 
-const testimonials = [
-  {
-    name: 'Custodio Ortiuti',
-    role: 'Avaliação do Google',
-    text: 'Vou sempre tomar café ou almoçar ou comer pizza, comida boa e atendimento muito bom, especialmente o Manoel que atende muito bem.',
-  },
-  {
-    name: 'Eduardo Ferraioli',
-    role: 'Avaliação do Google',
-    text: 'O melhor lugar para almoçar, jantar e comprar um pão quentinho...',
-  },
-  {
-    name: 'Daniela Christine',
-    role: 'Avaliação do Google',
-    text: 'Amo essa padaria. Destaque para as roscas de polvilho, pão de torresmo, esfihas dentre outras delícias (sempre descubro algo novo). Todas as vezes que vou à Caraguatatuba passo lá e compro tudo que vejo na frente hahaha. Super recomendo.',
-  },
-  {
-    name: 'Beto Bolsam',
-    role: 'Avaliação do Google',
-    text: 'Excelente atendimento, ambiente agradável e ótimos produtos!',
-  }
-]
+interface Props {
+  data?: any;
+}
+
+const { data = {} } = Astro.props;
+
+// Use CMS data if available, fallback to default hardcoded list
+const testimonials = Array.isArray(data.testimonials) && data.testimonials.length > 0
+  ? data.testimonials
+  : [
+      {
+        name: 'Custodio Ortiuti',
+        role: 'Avaliação do Google',
+        text: 'Vou sempre tomar café ou almoçar ou comer pizza, comida boa e atendimento muito bom, especialmente o Manoel que atende muito bem.',
+      },
+      {
+        name: 'Eduardo Ferraioli',
+        role: 'Avaliação do Google',
+        text: 'O melhor lugar para almoçar, jantar e comprar um pão quentinho...',
+      },
+      {
+        name: 'Daniela Christine',
+        role: 'Avaliação do Google',
+        text: 'Amo essa padaria. Destaque para as roscas de polvilho, pão de torresmo, esfihas dentre outras delícias (sempre descubro algo novo). Todas as vezes que vou à Caraguatatuba passo lá e compro tudo que vejo na frente hahaha. Super recomendo.',
+      },
+      {
+        name: 'Beto Bolsam',
+        role: 'Avaliação do Google',
+        text: 'Excelente atendimento, ambiente agradável e ótimos produtos!',
+      }
+    ]
 ---
 
 <section class="py-24 bg-dark text-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <SectionHeading 
-      title="Depoimentos" 
-      subtitle="A Palavra de Nossos Clientes" 
+      title={data.testimonials_title || "Depoimentos"} 
+      subtitle={data.testimonials_subtitle || "A Palavra de Nossos Clientes"} 
       titleColor="text-accent"
       theme="dark"
     />
