@@ -1,6 +1,12 @@
 ---
 import { Image } from 'astro:assets'
 import IconWhatsapp from '~icons/logos/whatsapp-icon'
+
+interface Props {
+  menu?: any[]
+}
+
+const { menu = [] } = Astro.props
 ---
 
 <header class="fixed w-full top-0 z-50 bg-secondary/80 backdrop-blur-md shadow-md">
@@ -21,10 +27,15 @@ import IconWhatsapp from '~icons/logos/whatsapp-icon'
         </a>
       </div>
       <nav class="hidden mt-2 md:flex space-x-8">
-        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Início</a>
-        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Fotos</a>
-        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Contato</a>
-        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Como Chegar?</a>
+        {menu.map((item) => (
+          <a
+            href={item.url}
+            target={item.target || '_self'}
+            class="text-dark hover:text-primary transition-colors font-medium"
+          >
+            {item.title}
+          </a>
+        ))}
       </nav>
       <div class="hidden md:flex items-center gap-6">
         <a href="https://wa.me/message/FJPMOHAAB72VG1" target="_blank" class="flex items-center gap-2 text-dark hover:text-primary transition-colors font-medium">

@@ -4,11 +4,22 @@ import Header from '@/components/header.astro'
 import Footer from '@/components/footer.astro'
 import WhatsappFloat from '@/components/ui/whatsapp-float.astro'
 
+import { rush } from '@/lib/rush'
+import { rushConfig } from 'rush.config'
+
 interface Props {
   title: string
 }
 
 const { title } = Astro.props
+
+const [mainMenuRes, footerMenuRes] = await Promise.all([
+  rush.getMenu(rushConfig.locales.pt_BR.navs.main),
+  rush.getMenu(rushConfig.locales.pt_BR.navs.footer)
+])
+
+const mainMenu = mainMenuRes.data?.items || []
+const footerMenu = footerMenuRes.data?.items || []
 ---
 
 <html lang="pt-BR" class="scroll-smooth">
@@ -23,11 +34,11 @@ const { title } = Astro.props
     <title>{title}</title>
   </head>
   <body class="antialiased min-h-screen flex flex-col">
-    <Header />
+    <Header menu={mainMenu} />
     <main class="grow">
       <slot />
     </main>
-    <Footer />
+    <Footer menu={footerMenu} />
     <WhatsappFloat />
   </body>
 </html>

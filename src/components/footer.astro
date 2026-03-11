@@ -1,4 +1,9 @@
 ---
+interface Props {
+  menu?: any[]
+}
+
+const { menu = [] } = Astro.props
 ---
 
 <footer class="bg-secondary pt-20 pb-10 border-t border-primary/10">
@@ -11,15 +16,15 @@
         </a>
         <p class="text-dark/70 pr-4">O verdadeiro sabor caseiro feito com dedicação e os melhores ingredientes.</p>
       </div>
-      <div>
         <h3 class="font-serif font-bold text-lg mb-6 text-dark">Links Rápidos</h3>
         <ul class="space-y-4">
-          <li><a href="#" class="text-dark/70 hover:text-primary transition-colors">Início</a></li>
-          <li><a href="#" class="text-dark/70 hover:text-primary transition-colors">Cardápio</a></li>
-          <li><a href="#" class="text-dark/70 hover:text-primary transition-colors">Nossa História</a></li>
-          <li><a href="#" class="text-dark/70 hover:text-primary transition-colors">Encomendas</a></li>
-          <li><a href="#" class="text-dark/70 hover:text-primary transition-colors">Termos de Uso</a></li>
-          <li><a href="#" class="text-dark/70 hover:text-primary transition-colors">Política de Privacidade</a></li>
+          {menu.map((item) => (
+            <li>
+              <a href={item.url} target={item.target || '_self'} class="text-dark/70 hover:text-primary transition-colors">
+                {item.title}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
       <div>
