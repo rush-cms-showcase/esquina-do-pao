@@ -7,13 +7,13 @@ import { RUSH_ROUTE_BLOG_ID } from 'astro:env/server';
 
 const { slug } = Astro.params;
 
-const blogCollectionId = RUSH_ROUTE_BLOG_ID;
+const blogCollectionId = RUSH_ROUTE_BLOG_ID.toString();
 const response = await rush.entries.get(blogCollectionId, {
   filters: { 'slug': slug },
   per_page: 1
 });
 
-const post = response.data?.[0];
+const post = (response as { data?: any[] }).data?.[0];
 
 if (!post) {
   return new Response(null, {
@@ -22,11 +22,19 @@ if (!post) {
   });
 }
 
+interface RichTextBlock {
+  type: string;
+  content?: RichTextBlock[];
+  text?: string;
+  attrs?: Record<string, any>;
+  marks?: { type: string; attrs?: Record<string, any> }[];
+}
+
 // Function to safely render rich text (blocks format), similar to the portico implementation
-function renderRichText(blocks: any[]) {
+function renderRichText(blocks: RichTextBlock[]): string {
   if (!blocks || !Array.isArray(blocks)) return '';
 
-  return blocks.map(block => {
+  return blocks.map((block: RichTextBlock) => {
     switch (block.type) {
       case 'paragraph':
         return `<p class="mb-6 text-lg text-dark/80 leading-relaxed">${block.content ? renderRichText(block.content) : ''}</p>`;
@@ -45,7 +53,7 @@ function renderRichText(blocks: any[]) {
             if (mark.type === 'italic') text = `<em>${text}</em>`;
             if (mark.type === 'underline') text = `<u>${text}</u>`;
             if (mark.type === 'strike') text = `<del>${text}</del>`;
-            if (mark.type === 'link') text = `<a href="${mark.attrs.href}" target="${mark.attrs.target}" class="text-primary hover:text-accent underline">${text}</a>`;
+            if (mark.type === 'link') text = `<a href="${mark.attrs?.href}" target="${mark.attrs?.target}" class="text-primary hover:text-accent underline">${text}</a>`;
           });
         }
         return text;
@@ -58,7 +66,7 @@ function renderRichText(blocks: any[]) {
       case 'blockquote':
         return `<blockquote class="border-l-4 border-primary pl-6 py-2 my-8 italic text-xl text-dark/70 bg-primary/5 rounded-r-lg">${block.content ? renderRichText(block.content) : ''}</blockquote>`;
       case 'image':
-        return `<figure class="my-10"><img src="${block.attrs.src}" alt="${block.attrs.alt || ''}" class="w-full rounded-xl shadow-md" />${block.attrs.title ? `<figcaption class="text-center mt-3 text-sm text-dark/60">${block.attrs.title}</figcaption>` : ''}</figure>`;
+        return `<figure class="my-10"><img src="${block.attrs?.src}" alt="${block.attrs?.alt || ''}" class="w-full rounded-xl shadow-md" />${block.attrs?.title ? `<figcaption class="text-center mt-3 text-sm text-dark/60">${block.attrs?.title}</figcaption>` : ''}</figure>`;
       default:
         // Se for um bloco com conteúdo (como um wrapper), processa o conteúdo
         if (block.content) {
