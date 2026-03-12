@@ -1,34 +1,39 @@
 ---
-import MenuItem from './menu-item.astro';
-import type { RushMenuCategory, RushMenuItem } from '@/types/rush';
+import MenuItem from './menu-item.astro'
+import type { RushMenuCategory, RushMenuItem } from '@/types/rush'
 
 interface Props {
-  category: RushMenuCategory;
+	category: RushMenuCategory
 }
 
-const { category } = Astro.props;
+const { category } = Astro.props
 ---
 
-<div class="bg-white rounded-3xl shadow-lg border border-dark/5 overflow-hidden scroll-mt-24" id={category.slug}>
-  
-  <div class="bg-dark text-white px-8 py-6 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[url('/pattern-food.svg')] bg-repeat"></div>
-    <h2 class="relative text-3xl font-serif font-bold z-10">{category.title}</h2>
-    {category.data?.extra && (
-      <p class="relative text-white/80 mt-2 text-sm z-10 max-w-3xl">{category.data.extra}</p>
-    )}
-  </div>
-
-  
-  <div class="p-8">
-    {category.data?.items && category.data.items.length > 0 ? (
-      <ul class="space-y-6">
-        {category.data.items.map((item: RushMenuItem) => (
-          <MenuItem item={item} />
-        ))}
-      </ul>
-    ) : (
-      <p class="text-dark/50 italic py-4">Nenhum item cadastrado nesta categoria.</p>
-    )}
-  </div>
+<div
+	class="scroll-mt-24"
+	id={category.slug}
+>
+	<div class="relative overflow-hidden mb-6">
+		<h2 class="relative text-3xl lg:text-4xl pb-4 font-serif font-bold z-10 border-b-2 border-dashed border-dark/30">
+    		{category.title}
+    	</h2>
+    	{category.data?.extra && (
+			<p class="relative text-primary mt-2 text-sm z-10 max-w-3xl">
+				{category.data.extra}
+			</p>
+		)}
+	</div>
+	<div class="">
+    	{category.data?.items && category.data.items.length > 0 ? (
+			<ul class="space-y-6">
+				{category.data.items.map((item: RushMenuItem) => (
+					<MenuItem item={item} />
+				))}
+			</ul>
+		) : (
+			<p class="text-dark/50 italic py-4">
+				Nenhum item cadastrado nesta categoria ainda. Aguarde para mais novidades!
+			</p>
+		)}
+	</div>
 </div>

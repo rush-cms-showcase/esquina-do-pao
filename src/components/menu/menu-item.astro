@@ -1,57 +1,59 @@
 ---
-import type { RushMenuItem } from '@/types/rush';
+import type { RushMenuItem } from '@/types/rush'
 
 interface Props {
-  item: RushMenuItem;
+	item: RushMenuItem
 }
 
-const { item } = Astro.props;
+const { item } = Astro.props
 ---
 
 <li class="group">
-  <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 sm:gap-4">
-    
-    
-    <div class="flex-1 bg-white relative z-10 pr-4">
-      <h3 class="text-xl font-bold text-dark group-hover:text-primary transition-colors inline-block">
-        <span class="text-primary/70 mr-2 text-sm font-mono tracking-tighter">#{item.id}</span>
-        {item.name}
-      </h3>
-      {item.description && (
-        <p class="text-sm text-dark/60 mt-1 leading-snug max-w-xl">
-          {item.description}
-        </p>
-      )}
-    </div>
-
-    
-    <div class="hidden sm:block grow border-b-2 border-dotted border-dark/20 relative top-[-8px] mx-4 transition-colors group-hover:border-primary/30"></div>
-
-    
-    <div class="shrink-0 bg-white relative z-10 pl-0 sm:pl-4 text-left sm:text-right mt-2 sm:mt-0">
-      {item.price && item.price.length > 0 ? (
-        item.price.length === 1 ? (
-          /* Single Price */
-          <span class="text-xl font-bold text-dark">
-            {item.price[0].price}
-          </span>
-        ) : (
-          /* Multiple Prices (Variants) */
-          <div class="flex flex-col gap-1 items-start sm:items-end">
-            {item.price.map((p: any) => (
-              <div class="flex items-center gap-2">
-                {p.name && (
-                  <span class="text-xs text-dark/60 uppercase font-medium tracking-wider">{p.name}:</span>
-                )}
-                <span class="text-lg font-bold text-dark">{p.price}</span>
-              </div>
-            ))}
-          </div>
-        )
-      ) : (
-        <span class="text-sm font-medium text-dark/40 italic">Consulte</span>
-      )}
-    </div>
-    
-  </div>
+	<div class="flex flex-col md:flex-row md:items-end justify-between gap-2 sm:gap-4 border-b-1 border-dashed border-primary/30 group-hover:border-primary pb-2">
+		<div class="flex flex-row items-end gap-2 lg:gap-4">
+			<span class="w-18 shrink-0 text-center font-bold text-primary/70 px-3 py-1 bg-gray-50 border border-gray-100 rounded-md text-sm font-mono tracking-tighter group-hover:border-primary/40">
+				#{item.id}
+			</span>
+			<div>
+				<h3 class="text-xl font-bold text-dark group-hover:text-primary transition-colors">
+					{item.name}
+				</h3>
+				{item.description && (
+					<p class="text-sm text-dark/60 mt-1 leading-snug max-w-xl">
+						{item.description}
+					</p>
+				)}
+			</div>
+		</div>
+		<div class="md:flex-shrink flex flex-row gap-2 relative z-10 text-left sm:text-right">
+			{item.price && item.price.length > 0 ? (
+				item.price.length === 1 ? (
+					<>
+						<div class="w-18 shrink-0 md:hidden"></div>
+						<span class="md:text-xl font-bold text-dark">
+							{item.price[0].price}
+						</span>
+					</>
+				) : (
+					<div class="flex flex-col gap-1 items-start sm:items-end">
+						{item.price.map((p: any) => (
+							<div class="flex items-center gap-2">
+								{p.name && (
+									<span class="text-xs text-dark/60 uppercase font-medium tracking-wider">
+										{p.name}:
+									</span>
+								)}
+								<span class="text-lg font-bold text-dark">{p.price}</span>
+							</div>
+						))}
+					</div>
+				)
+			) : (
+				<>
+					<div class="w-18 shrink-0 md:hidden"></div>
+					<span class="text-sm font-medium text-dark/40 italic">Consulte</span>
+				</>
+			)}
+		</div>
+	</div>
 </li>
