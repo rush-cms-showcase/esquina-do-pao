@@ -1,41 +1,47 @@
 ---
-import { Image } from 'astro:assets';
-import IconWhatsapp from '~icons/logos/whatsapp-icon';
+import { Image } from 'astro:assets'
+import IcBaselineWhatsapp from '~icons/ic/baseline-whatsapp'
 
 interface Props {
-  data?: any;
+	data?: any
 }
 
-const { data = {} } = Astro.props;
+const { data = {} } = Astro.props
 ---
 
 <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-  <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-linear-to-r from-dark/90 to-black/70 z-10"></div>
-    <Image
-      src="/hero-bg.png"
-      alt="Pães recém saídos do forno"
-      class="w-full h-full object-cover"
-      width={4128}
-      height={3096}
-    />
-  </div>
-  
-  <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
-    <h1 class="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight drop-shadow-lg max-w-4xl animate-fade-in-up animate-delay-100" set:html={data.title || 'Atendimento e qualidade <br/> é a nossa marca'}></h1>
-    <p class="mt-4 text-xl text-secondary max-w-2xl mb-10 drop-shadow-md animate-fade-in-up animate-delay-200 lg:leading-relaxed">
-      {data.description || 'Pão quentinho a toda hora, buffet self-service, lanches caprichados e pizzas saborosas. Tudo feito com muito carinho para você e sua família.'}
-    </p>
-    <div class="flex flex-col sm:flex-row items-center gap-6 animate-fade-in-up animate-delay-300">
-      <a href="#" target="_blank" class="flex items-center gap-2 text-white hover:text-accent transition-colors font-medium text-lg drop-shadow-md bg-dark/40 px-6 py-3 rounded-full backdrop-blur-sm border border-white/20">
-        <IconWhatsapp class="w-6 h-6" />
-        <span>Fale Conosco</span>
-      </a>
-      <a href="#" class="bg-primary text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-dark transition-all duration-300 shadow-lg text-lg">
-        Acessar Cardápio
-      </a>
-    </div>
-  </div>
+	<div class="absolute inset-0 z-0">
+		<div class="absolute inset-0 bg-linear-to-r from-dark/90 to-black/70 z-10"></div>
+		<Image
+			src="/hero-bg.png"
+			alt="Pães recém saídos do forno"
+			class="w-full h-full object-cover"
+			width={4128}
+			height={3096}
+		/>
+	</div>
+
+	<div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+		<h1
+			class="text-5xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight drop-shadow-lg max-w-4xl animate-fade-in-up animate-delay-100"
+			set:html={data.title || 'Atendimento e qualidade <br/> é a nossa marca'}
+		>
+		</h1>
+		<p class="mt-4 text-xl text-secondary max-w-2xl mb-10 drop-shadow-md animate-fade-in-up animate-delay-200 lg:leading-relaxed">
+			{data.description || 'Pão quentinho a toda hora, buffet self-service, lanches caprichados e pizzas saborosas. Tudo feito com muito carinho para você e sua família.'}
+		</p>
+		<div class="flex flex-col sm:flex-row items-center gap-6 animate-fade-in-up animate-delay-300">
+			<a
+				href={data.whatsapp_url || "https://wa.me/message/FJPMOHAAB72VG1"}
+				target="_blank"
+				class="flex items-center gap-2 text-white hover:text-accent transition-colors font-medium text-lg drop-shadow-md bg-dark/40 px-8 py-4 rounded-full backdrop-blur-sm border border-white/20"
+			>
+				<IcBaselineWhatsapp class="w-6 h-6 text-[#25D366]" />
+				<span>Fale Conosco</span>
+			</a>
+			<a href="/cardapio" class="bg-primary text-white px-8 py-4 rounded-full font-medium hover:bg-white hover:text-dark transition-all duration-300 shadow-lg text-lg">
+				Acessar Cardápio
+			</a>
+		</div>
+	</div>
 </section>
-
-

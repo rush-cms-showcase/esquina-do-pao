@@ -1,16 +1,16 @@
 ---
-import IconWhatsapp from '~icons/logos/whatsapp-icon'
+import IcBaselineWhatsapp from '~icons/ic/baseline-whatsapp'
 ---
 
-<a 
-  href="https://wa.me/message/FJPMOHAAB72VG1" 
-  target="_blank" 
+<a
+  href="https://wa.me/message/FJPMOHAAB72VG1"
+  target="_blank"
   rel="noopener noreferrer"
-  class="fixed bottom-6 right-6 z-50 rounded-full shadow-lg shadow-black/10 hover:scale-110 hover:shadow-xl transition-all duration-300 flex items-center justify-center group whatsapp-float"
+  class="fixed bottom-6 right-6 z-50 bg-white rounded-full p-3 shadow-lg shadow-black/20 hover:scale-110 hover:shadow-xl transition-all duration-300 flex items-center justify-center group whatsapp-float"
   aria-label="Entre em contato pelo WhatsApp"
 >
-  <IconWhatsapp class="w-12 h-12" />
-  
+  <IcBaselineWhatsapp class="w-10 h-10 text-[#25D366]" />
+
   <span class="absolute right-full mr-4 bg-white text-dark text-sm font-medium py-2 px-4 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
     Fale Conosco
   </span>
@@ -20,13 +20,13 @@ import IconWhatsapp from '~icons/logos/whatsapp-icon'
   .whatsapp-float {
     animation: float 3s ease-in-out infinite;
   }
-  
+
   @keyframes float {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-8px); }
     100% { transform: translateY(0px); }
   }
-  
+
   .whatsapp-float:hover {
     animation: none;
   }

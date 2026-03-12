@@ -1,19 +1,35 @@
 ---
-import type { RushMenuCategory } from '@/types/rush';
+import type { RushMenuCategory } from '@/types/rush'
 
 interface Props {
-  categories: RushMenuCategory[];
+	categories: RushMenuCategory[]
 }
 
-const { categories = [] } = Astro.props;
+const { categories = [] } = Astro.props
 ---
 
 {categories.length > 0 && (
-  <nav class="mt-16 flex flex-wrap justify-center gap-3" aria-label="Navegação do Cardápio">
-      {categories.map((category: RushMenuCategory) => (
-          <a href={`#${category.slug}`} class="px-4 py-2 rounded-full bg-secondary text-dark/80 hover:bg-primary hover:text-white transition-colors text-sm font-medium shadow-sm">
-              {category.title}
-          </a>
-      ))}
-  </nav>
+	<nav
+		class="max-md:fixed max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:z-20 max-md:overflow-x-auto max-md:flex-nowrap max-md:justify-start max-md:px-4 max-md:py-3 max-md:bg-secondary/50 max-md:backdrop-blur-sm max-md:border-t max-md:border-primary/10 md:mt-16 flex flex-wrap justify-center gap-3 nav-scroll"
+		aria-label="Navegação do Cardápio"
+	>
+		{categories.map((category: RushMenuCategory) => (
+			<a
+				href={`#${category.slug}`}
+				class="shrink-0 px-4 py-2 rounded-full bg-secondary border border-primary/20 text-dark/80 hover:bg-primary hover:border-primary hover:text-white transition-colors text-sm font-medium"
+			>
+				{category.title}
+			</a>
+		))}
+	</nav>
 )}
+
+<style>
+	.nav-scroll::-webkit-scrollbar {
+		display: none;
+	}
+	.nav-scroll {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+</style>

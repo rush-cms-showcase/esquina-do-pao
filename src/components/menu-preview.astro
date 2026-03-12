@@ -1,34 +1,35 @@
 ---
-import SectionHeading from '@/components/ui/section-heading.astro';
+import SectionHeading from '@/components/ui/section-heading.astro'
+import { rush } from '@/lib/rush'
+import { RUSH_MENU_ID } from 'astro:env/server'
+import type { RushMenuCategory, RushMenuItem } from '@/types/rush'
 
 interface Props {
-  data?: any;
+  data?: any
 }
 
-const { data = {} } = Astro.props;
+const { data = {} } = Astro.props
 
-const menuCategories = Array.isArray(data.menu_categories) && data.menu_categories.length > 0
-  ? data.menu_categories
-  : [
-      {
-        category: "Pães Quentinhos",
-        items: [
-          { name: "Pão Francês Tradicional", description: "Fornadas a cada hora, sempre crocante", price: "R$ 19,90/kg" },
-          { name: "Pão de Queijo Especial", description: "A verdadeira receita mineira com muito queijo", price: "R$ 49,90/kg" },
-          { name: "Broa de Milho Fofinha", description: "Com toque de erva doce, receita da vovó", price: "R$ 6,50/un" },
-          { name: "Baguete Recheada", description: "Recheios variados: frango, calabresa e quatro queijos", price: "R$ 14,00/un" }
-        ]
-      },
-      {
-        category: "Lanches na Chapa",
-        items: [
-          { name: "Misto Quente Caprichado", description: "Pão francês, presunto de primeira e muita muçarela", price: "R$ 12,00" },
-          { name: "Bauru Clássico", description: "Pão francês, rosbife caseiro, tomate, picles e queijo derretido", price: "R$ 24,00" },
-          { name: "Pão na Chapa com Requeijão", description: "O clássico paulistano bem tostado", price: "R$ 8,00" },
-          { name: "X-Tudo da Esquina", description: "Hambúrguer, queijo, presunto, bacon, ovo, alface e tomate", price: "R$ 28,00" }
-        ]
-      }
-    ]
+let previewCategories: RushMenuCategory[] = []
+
+try {
+  const response = await rush.entries.get(String(RUSH_MENU_ID), {
+    per_page: 10,
+    sort: 'sort_order'
+  }) as any
+
+  const categories: RushMenuCategory[] = response.data || []
+
+  previewCategories = categories
+    .filter((c) => c.data?.items && c.data.items.length > 0)
+    .slice(0, 2)
+    .map((c) => ({
+      ...c,
+      data: { ...c.data, items: c.data?.items?.slice(0, 4) ?? [] }
+    }))
+} catch (error) {
+  console.error('Failed to fetch menu preview:', error)
+}
 ---
 
 <section class="pt-24 bg-white relative overflow-hidden">
@@ -36,39 +37,48 @@ const menuCategories = Array.isArray(data.menu_categories) && data.menu_categori
   <div class="absolute left-0 bottom-0 w-48 h-48 bg-secondary rounded-tr-full opacity-50 -z-10"></div>
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <SectionHeading 
-      title={data.menu_preview_title || "Dá água na boca"} 
+    <SectionHeading
+      title={data.menu_preview_title || "Dá água na boca"}
       subtitle={data.menu_preview_subtitle || "Um pedaço do nosso Cardápio"}
       titleColor="text-accent"
     />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 bg-white/50 backdrop-blur-md p-8 sm:p-12 pb-16 lg:pb-32 border border-primary/10 shadow-xl shadow-primary/5 border-b-none">
-      <div class="absolute bottom-0 left-0 bg-linear-to-t from-white to-transparent w-full h-2/3 p-8 z-10 flex items-center justify-end flex-col">
-      <div class="mt-16 text-center">
-        <a href="#" class="inline-block bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-medium hover:bg-primary hover:text-white transition-all duration-300 shadow-md hover:shadow-lg text-lg">
+    <div class="relative">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 bg-white/50 backdrop-blur-md p-8 sm:p-12 border border-primary/10 shadow-xl shadow-primary/5 max-h-[520px] overflow-hidden">
+        {previewCategories.length === 0 ? (
+          <div class="col-span-2 text-center py-8 text-dark/50 italic">Cardápio sendo atualizado...</div>
+        ) : (
+          previewCategories.map((category) => (
+            <div>
+              <h3 class="text-2xl font-serif font-bold text-primary mb-8 border-b-2 border-dashed border-primary/20 pb-2">
+                {category.title}
+              </h3>
+              <ul class="space-y-8">
+                {category.data?.items?.map((item: RushMenuItem) => (
+                  <li class="cursor-default">
+                    <div class="flex justify-between items-baseline gap-4 mb-1">
+                      <span class="font-bold font-serif text-lg text-dark">{item.name}</span>
+                      <div class="grow border-b-2 border-dotted border-dark/20 relative top-[-6px]"></div>
+                      <span class="font-bold text-lg text-primary shrink-0">
+                        {item.price && item.price.length > 0 ? item.price[0].price : 'Consulte'}
+                      </span>
+                    </div>
+                    {item.description && (
+                      <p class="text-dark/70 text-sm leading-relaxed pr-16">{item.description}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white via-white/80 to-transparent z-10 flex items-end justify-center pb-8">
+        <a href="/cardapio" class="inline-block bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-medium hover:bg-primary hover:text-white transition-all duration-300 shadow-md hover:shadow-lg text-lg">
           Ver o Cardápio Completo
         </a>
       </div>
-    </div>
-      {menuCategories.map((group: any) => (
-        <div>
-          <h3 class="w-full text-2xl font-serif font-bold text-primary mb-8 border-b-2 border-dashed border-primary/20 pb-2 inline-block">
-            {group.category}
-          </h3>
-          <ul class="space-y-8">
-            {Array.isArray(group.items) ? group.items.map((item: any) => (
-              <li class="cursor-default">
-                <div class="flex justify-between items-baseline gap-4 mb-1">
-                  <span class="font-bold font-serif text-lg text-dark">{item.name}</span>
-                  <div class="grow border-b-2 border-dotted border-dark/20 relative top-[-6px]"></div>
-                  <span class="font-bold text-lg text-primary shrink-0">{item.price}</span>
-                </div>
-                <p class="text-dark/70 text-sm leading-relaxed pr-16">{item.description}</p>
-              </li>
-            )) : null}
-          </ul>
-        </div>
-      ))}
     </div>
   </div>
 </section>
