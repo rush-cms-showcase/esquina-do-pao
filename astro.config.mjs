@@ -31,6 +31,8 @@ export default defineConfig({
       PUBLIC_WHATSAPP: envField.string({ context: 'client', access: 'public', optional: true }),
       
       GA_TAG: envField.string({ context: 'client', access: 'public', optional: true }),
+
+      WEBHOOK_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
     }
   },
   vite: {
