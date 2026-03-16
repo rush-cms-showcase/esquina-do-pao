@@ -1,0 +1,149 @@
+---
+import BaseLayout from '@/layouts/base-layout.astro'
+import { SITE_CONTACT } from '@/lib/site'
+import { rushConfig } from 'rush.config'
+
+const contactFormId = rushConfig.locales[rushConfig.defaultLocale]?.forms?.contact
+---
+
+<BaseLayout
+	title="Contato | Esquina do Pão"
+	description="Entre em contato com a Esquina do Pão, envie sua mensagem e veja nossa localização no mapa."
+>
+	<section class="pt-32 pb-20 bg-white">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<p class="text-primary uppercase tracking-[0.2em] text-xs font-bold mb-4">Fale com a Esquina</p>
+			<h1 class="text-5xl md:text-6xl font-serif font-bold text-dark leading-tight max-w-3xl">
+				Contato
+			</h1>
+			<p class="mt-6 text-lg text-dark/70 max-w-2xl leading-relaxed">
+				Nos envie uma mensagem sobre encomendas, dúvidas e sugestões. Nossa equipe retorna o mais rápido possível.
+			</p>
+		</div>
+	</section>
+
+	<section class="pb-24 bg-white">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
+			<div class="lg:col-span-7 border-t-4 border-primary pt-8">
+				<form id="contact-form" action="/api/contact" method="post" class="space-y-8">
+					<input type="hidden" name="company" tabindex="-1" autocomplete="off" class="hidden" />
+					{contactFormId && <input type="hidden" name="form_id" value={contactFormId} />}
+
+					<div>
+						<label for="name" class="block text-sm font-semibold uppercase tracking-wide text-dark/80 mb-3">Nome</label>
+						<input id="name" name="name" required class="w-full border-0 border-b-2 border-dark/20 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 text-dark placeholder:text-dark/40" placeholder="Seu nome completo" />
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+						<div>
+							<label for="email" class="block text-sm font-semibold uppercase tracking-wide text-dark/80 mb-3">E-mail</label>
+							<input id="email" name="email" type="email" required class="w-full border-0 border-b-2 border-dark/20 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 text-dark placeholder:text-dark/40" placeholder="voce@exemplo.com" />
+						</div>
+						<div>
+							<label for="phone" class="block text-sm font-semibold uppercase tracking-wide text-dark/80 mb-3">Telefone</label>
+							<input id="phone" name="phone" type="tel" class="w-full border-0 border-b-2 border-dark/20 bg-transparent px-0 py-3 focus:border-primary focus:ring-0 text-dark placeholder:text-dark/40" placeholder="(12) 99999-9999" />
+						</div>
+					</div>
+
+					<div>
+						<label for="message" class="block text-sm font-semibold uppercase tracking-wide text-dark/80 mb-3">Mensagem</label>
+						<textarea id="message" name="message" rows={6} required class="w-full border-2 border-dark/15 bg-transparent p-4 focus:border-primary focus:ring-0 text-dark placeholder:text-dark/40 resize-y" placeholder="Conte como podemos ajudar"></textarea>
+					</div>
+
+					<div class="flex items-center gap-4">
+						<button id="contact-submit" type="submit" class="inline-flex items-center justify-center bg-primary text-white px-8 py-3 font-semibold uppercase tracking-wide hover:bg-dark transition-colors">
+							Enviar mensagem
+						</button>
+						<span id="contact-feedback" class="text-sm text-dark/70" aria-live="polite"></span>
+					</div>
+				</form>
+			</div>
+
+			<div class="lg:col-span-5 lg:pl-8 border-l-0 lg:border-l lg:border-dark/15">
+				<h2 class="text-2xl font-serif font-bold text-dark mb-8">Informações de contato</h2>
+				<div class="space-y-8 text-dark/80 leading-relaxed">
+					<div>
+						<p class="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">Endereço</p>
+						<p>{SITE_CONTACT.address.street}</p>
+						<p>{SITE_CONTACT.address.neighborhood}</p>
+						<p>{SITE_CONTACT.address.city} - {SITE_CONTACT.address.state}</p>
+						<p>CEP {SITE_CONTACT.address.zipCode}</p>
+					</div>
+
+					<div>
+						<p class="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">Telefone</p>
+						<a class="text-lg hover:text-primary transition-colors" href={`tel:${SITE_CONTACT.phone.raw}`}>
+							{SITE_CONTACT.phone.display}
+						</a>
+					</div>
+
+					<div>
+						<p class="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">E-mail</p>
+						<a class="hover:text-primary transition-colors" href={`mailto:${SITE_CONTACT.email}`}>
+							{SITE_CONTACT.email}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="pb-24 bg-white">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="border-y-4 border-primary py-8">
+				<h2 class="text-2xl md:text-3xl font-serif font-bold text-dark mb-6">Onde estamos</h2>
+				<div class="w-full h-[460px] overflow-hidden border border-dark/10">
+					<iframe
+						title="Mapa - Esquina do Pão"
+						src={SITE_CONTACT.map.embedUrl}
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						class="w-full h-full"
+					></iframe>
+				</div>
+				<div class="mt-6">
+					<a
+						href={SITE_CONTACT.map.routeUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center justify-center border-2 border-dark text-dark px-7 py-3 uppercase tracking-wide font-semibold hover:bg-dark hover:text-white transition-colors"
+					>
+						Iniciar rota
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<script>
+	const form = document.getElementById('contact-form')
+	const submit = document.getElementById('contact-submit')
+	const feedback = document.getElementById('contact-feedback')
+
+	form?.addEventListener('submit', async (event) => {
+		event.preventDefault()
+		if (!(form instanceof HTMLFormElement)) return
+
+		submit?.setAttribute('disabled', 'true')
+		feedback && (feedback.textContent = 'Enviando...')
+
+		try {
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: new FormData(form),
+			})
+
+			const data = await response.json().catch(() => ({ ok: false, message: 'Erro inesperado ao enviar.' }))
+			feedback && (feedback.textContent = data.message)
+
+			if (response.ok) {
+				form.reset()
+			}
+		} catch {
+			feedback && (feedback.textContent = 'Não foi possível enviar agora. Tente novamente em alguns minutos.')
+		} finally {
+			submit?.removeAttribute('disabled')
+		}
+	})
+</script>
