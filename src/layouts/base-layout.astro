@@ -6,29 +6,102 @@ import WhatsappFloat from '@/components/ui/whatsapp-float.astro'
 
 import { rush } from '@/lib/rush'
 import { rushConfig } from 'rush.config'
+import type { NavItem } from '@/types/rush'
+import { extractMenuItems, mapMenuItem } from '@/lib/rush/nav'
+import { RUSH_URL, PUBLIC_INSTAGRAM, PUBLIC_FACEBOOK, PUBLIC_EMAIL, PUBLIC_WHATSAPP } from 'astro:env/client'
+import { buildLocalBusinessSchema, toAbsoluteUrl } from '@/lib/seo'
 
 interface Props {
   title: string
+  description?: string
+  image?: string
+  type?: 'website' | 'article'
+  noindex?: boolean
+  schema?: string
 }
 
-const { title } = Astro.props
+const {
+  title,
+  description = 'Padaria Esquina do Pão em Caraguatatuba com produtos artesanais, cardápio completo e atendimento de qualidade.',
+  image = '/banner.png',
+  type = 'website',
+  noindex = false,
+  schema,
+} = Astro.props
 
-const [mainMenuRes, footerMenuRes] = await Promise.all([
-  rush.getMenu(rushConfig.locales.pt_BR.navs?.main || ''),
-  rush.getMenu(rushConfig.locales.pt_BR.navs?.footer || '')
-]) as any;
+const siteUrl = Astro.site?.toString() || RUSH_URL || 'https://padariaesquinadopao.com.br'
+const canonical = new URL(Astro.url.pathname, siteUrl).toString()
+const ogImage = toAbsoluteUrl(image, siteUrl)
+const sameAs = [PUBLIC_INSTAGRAM, PUBLIC_FACEBOOK].filter(Boolean) as string[]
+const defaultSchema = buildLocalBusinessSchema({
+  name: 'Esquina do Pão',
+  description,
+  url: siteUrl,
+  image: ogImage,
+  phone: PUBLIC_WHATSAPP,
+  email: PUBLIC_EMAIL,
+  sameAs,
+  address: {
+    streetAddress: 'Av. Piauí, 500 - Jardim Primavera',
+    addressLocality: 'Caraguatatuba',
+    addressRegion: 'SP',
+    postalCode: '11660-640',
+    addressCountry: 'BR',
+  },
+})
+const finalSchema = schema || defaultSchema
 
-const mainMenu = mainMenuRes.data?.items || []
-const footerMenu = footerMenuRes.data?.items || []
+const localeConfig = rushConfig.locales[rushConfig.defaultLocale]
+const navs = localeConfig?.navs
+
+async function fetchMenu(menuId: string | undefined): Promise<NavItem[]> {
+  if (!menuId) return []
+
+  try {
+    const menuResponse = await rush.getMenu(menuId)
+    return extractMenuItems(menuResponse).map((item) => mapMenuItem(item))
+  } catch (error) {
+    console.error(`Failed to fetch menu ${menuId}:`, error)
+    return []
+  }
+}
+
+const [mainMenu, footerMenu] = await Promise.all([
+  fetchMenu(navs?.main),
+  fetchMenu(navs?.footer),
+])
 ---
 
 <html lang="pt-BR" class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta name="theme-color" content="#D97706" />
+
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/banner.png" />
+
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Esquina do Pão" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Esquina do Pão" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={finalSchema} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">

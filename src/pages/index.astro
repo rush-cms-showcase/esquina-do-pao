@@ -23,7 +23,10 @@ if (rootId) {
 }
 ---
 
-<BaseLayout title={entryData.title || "Esquina do Pão | O Verdadeiro Sabor Artesanal"}>
+<BaseLayout
+  title={entryData.title || "Esquina do Pão | O Verdadeiro Sabor Artesanal"}
+  description={entryData.description || "Padaria artesanal em Caraguatatuba com cardápio completo, produtos frescos e atendimento acolhedor todos os dias."}
+>
   <HeroSection data={entryData} />
   <SpecialtiesSection data={entryData} />
   <MenuPreview data={entryData} />

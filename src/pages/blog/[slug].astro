@@ -77,7 +77,12 @@ function renderRichText(blocks: RichTextBlock[]): string {
 const contentHtml = renderRichText(post.content?.content || []);
 ---
 
-<BaseLayout title={`${post.title} | Blog Esquina do Pão`}>
+<BaseLayout
+  title={`${post.title} | Blog Esquina do Pão`}
+  description={post.excerpt || 'Leia no blog da Esquina do Pão conteúdos sobre panificação, receitas e novidades da padaria.'}
+  image={post.cover?.url || '/banner.png'}
+  type="article"
+>
   <article class="bg-white min-h-screen pb-24">
     
     <header class="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden bg-dark">

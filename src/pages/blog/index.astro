@@ -14,7 +14,10 @@ const response = await rush.entries.get(blogCollectionId, {
 const posts = response.data || [];
 ---
 
-<BaseLayout title="Blog | Esquina do Pão">
+<BaseLayout
+  title="Blog | Esquina do Pão"
+  description="Novidades, dicas e bastidores da Esquina do Pão. Conteúdo sobre panificação, produtos e rotina da padaria."
+>
   <section class="pt-32 pb-24 bg-white relative overflow-hidden min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <SectionHeading 

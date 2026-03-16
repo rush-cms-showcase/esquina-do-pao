@@ -20,6 +20,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@astrojs/sitemap": "^3.7.1",
     "@iconify-json/ic": "^1.2.4",
     "@iconify-json/logos": "^1.2.10",
     "@types/node": "^25.4.0",

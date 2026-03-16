@@ -1,0 +1,146 @@
+---
+import BaseLayout from '@/layouts/base-layout.astro'
+import { rush } from '@/lib/rush'
+import { rushConfig } from 'rush.config'
+
+const { slug } = Astro.params
+const routePath = `/${slug}`
+
+if (!slug || routePath === '/blog') {
+	return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const routeId = rushConfig.routes[routePath]
+const rootRouteId = rushConfig.routes['/']
+const configuredRouteIds = Array.from(new Set(Object.values(rushConfig.routes).map((id) => String(id))))
+
+let pageEntry: Record<string, any> | null = null
+
+if (routeId) {
+	try {
+		pageEntry = await rush.entries.getBySlug(String(routeId), slug) as Record<string, any>
+	} catch {
+		const entryId = Number(routeId)
+		if (!Number.isNaN(entryId)) {
+			try {
+				pageEntry = await rush.entries.getById(entryId) as Record<string, any>
+			} catch {
+				pageEntry = null
+			}
+		}
+	}
+}
+
+if (!pageEntry && rootRouteId) {
+	try {
+		pageEntry = await rush.entries.getBySlug(String(rootRouteId), slug) as Record<string, any>
+	} catch {
+		pageEntry = null
+	}
+}
+
+if (!pageEntry) {
+	for (const collectionId of configuredRouteIds) {
+		if (collectionId === String(routeId) || collectionId === String(rootRouteId)) continue
+
+		try {
+			pageEntry = await rush.entries.getBySlug(collectionId, slug) as Record<string, any>
+			if (pageEntry) break
+		} catch {
+			pageEntry = null
+		}
+	}
+}
+
+if (!pageEntry) {
+	return new Response(null, { status: 404, statusText: 'Not found' })
+}
+
+const entryData = pageEntry?.data || Object.create(null)
+const pageTitle = entryData.title || pageEntry?.title || 'Esquina do Pão'
+
+interface RichTextBlock {
+	type: string
+	content?: RichTextBlock[]
+	text?: string
+	attrs?: Record<string, any>
+	marks?: { type: string; attrs?: Record<string, any> }[]
+}
+
+function renderRichText(blocks: RichTextBlock[]): string {
+	if (!Array.isArray(blocks)) return ''
+
+	return blocks
+		.map((block) => {
+			switch (block.type) {
+				case 'doc':
+					return block.content ? renderRichText(block.content) : ''
+				case 'paragraph':
+					return `<p class="mb-6 text-lg text-dark/80 leading-relaxed">${block.content ? renderRichText(block.content) : ''}</p>`
+				case 'heading': {
+					const level = block.attrs?.level || 2
+					const tag = `h${level}`
+					const sizes: Record<number, string> = {
+						1: 'text-4xl',
+						2: 'text-3xl',
+						3: 'text-2xl',
+						4: 'text-xl',
+						5: 'text-lg',
+						6: 'text-base',
+					}
+					const sizeClass = sizes[level as number] || 'text-2xl'
+					return `<${tag} class="${sizeClass} font-serif font-bold text-dark mt-12 mb-6">${block.content ? renderRichText(block.content) : ''}</${tag}>`
+				}
+				case 'text': {
+					let text = block.text || ''
+					if (block.marks) {
+						block.marks.forEach((mark) => {
+							if (mark.type === 'bold') text = `<strong>${text}</strong>`
+							if (mark.type === 'italic') text = `<em>${text}</em>`
+							if (mark.type === 'underline') text = `<u>${text}</u>`
+							if (mark.type === 'link') {
+								text = `<a href="${mark.attrs?.href || '#'}" target="${mark.attrs?.target || '_self'}" class="text-primary hover:text-accent underline">${text}</a>`
+							}
+						})
+					}
+					return text
+				}
+				case 'bulletList':
+					return `<ul class="list-disc list-inside mb-6 space-y-2 text-dark/80">${block.content ? renderRichText(block.content) : ''}</ul>`
+				case 'orderedList':
+					return `<ol class="list-decimal list-inside mb-6 space-y-2 text-dark/80">${block.content ? renderRichText(block.content) : ''}</ol>`
+				case 'listItem':
+					return `<li>${block.content ? renderRichText(block.content) : ''}</li>`
+				case 'blockquote':
+					return `<blockquote class="border-l-4 border-primary pl-6 py-2 my-8 italic text-xl text-dark/70 bg-primary/5 rounded-r-lg">${block.content ? renderRichText(block.content) : ''}</blockquote>`
+				case 'horizontalRule':
+					return '<hr class="my-10 border-dark/10" />'
+				default:
+					return block.content ? renderRichText(block.content) : ''
+			}
+		})
+		.join('')
+}
+
+const entryContent = entryData.content || pageEntry?.content || ''
+const contentHtml = typeof entryContent === 'string'
+	? entryContent
+	: renderRichText((entryContent as RichTextBlock[] | { content?: RichTextBlock[] })?.content || (entryContent as RichTextBlock[]))
+---
+
+<BaseLayout
+	title={`${pageTitle} | Esquina do Pão`}
+	description={pageEntry?.excerpt || entryData.description || `Conheça ${pageTitle} na Esquina do Pão.`}
+>
+	<section class="pt-32 pb-24 bg-white relative overflow-hidden min-h-screen">
+		<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+			<header class="mb-12 text-center">
+				<h1 class="text-4xl md:text-5xl font-serif font-bold text-dark leading-tight">
+					{pageTitle}
+				</h1>
+			</header>
+
+			<div class="prose prose-lg prose-headings:font-serif prose-headings:text-dark prose-a:text-primary hover:prose-a:text-accent max-w-none" set:html={contentHtml} />
+		</div>
+	</section>
+</BaseLayout>

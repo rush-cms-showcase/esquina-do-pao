@@ -3,11 +3,14 @@ import { defineConfig, envField } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import Icons from 'unplugin-icons/vite';
 import node from '@astrojs/node';
+import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'node:url';
 
 // https://astro.build/config
 // https://astro.build/config
 export default defineConfig({
+  site: process.env.RUSH_URL || 'https://padariaesquinadopao.com.br',
+  integrations: [sitemap()],
   output: 'server',
   adapter: node({
     mode: 'standalone',
